@@ -1,9 +1,9 @@
 import { createElement } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
-import { Divider, Stack, Box, Button, ButtonProps } from "@mui/material";
+import { SignOutButton } from "@/layouts/dashboard/components";
+import { Stack, Box, Button, ButtonProps, Typography } from "@mui/material";
 import { useDashboardRoutes } from "@/layouts/dashboard/useDashboardRoutes";
-import { ProfileButton, ProfileCard, SignOutButton } from "@/layouts/dashboard/components";
 
 type StyledLinkButtonProps = { href?: string; selected?: boolean; children?: React.ReactNode } & ButtonProps;
 
@@ -31,14 +31,16 @@ export default function SideBar() {
     return (
         <Stack minHeight="100vh" display="flex" direction="column" justifyContent="space-between" px={2} py={3}>
             <Box>
-                <ProfileCard />
+                <Link to="/" style={{ display: "flex", marginBottom: 20 }}>
+                    <img src="/logo.png" alt="logo" width={128} />
+                </Link>
+                <Typography sx={{ ml: 2.75, mb: 0.5, fontSize: 12, fontWeight: 600, textTransform: "uppercase", color: "text.secondary" }}>
+                    Routes
+                </Typography>
                 <SideBarItems />
             </Box>
-            <Box>
-                <Divider sx={{ mb: 3 }} />
-                <ProfileButton />
-                <SignOutButton />
-            </Box>
+
+            <SignOutButton />
         </Stack>
     );
 }

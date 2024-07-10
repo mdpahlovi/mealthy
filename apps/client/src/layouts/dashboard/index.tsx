@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Box, Divider } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import { Box } from "@mui/material";
+import { Outlet } from "react-router-dom";
 import SideBar from "@/layouts/dashboard/sidebar";
-import { PermanentSideBar, TemporarySideBar, SideBarButton } from "@/layouts/dashboard/components";
+import { PermanentSideBar, TemporarySideBar } from "@/layouts/dashboard/components";
 
 export default function DashboardLayout() {
     const [open, setOpen] = useState(false);
@@ -17,18 +17,8 @@ export default function DashboardLayout() {
                     <SideBar />
                 </PermanentSideBar>
             </Box>
-            <Box width={{ md: `calc(100% - 264px)` }} flexGrow={1}>
-                <Box height={64} display="flex" alignItems="center" mx={3} gap={3}>
-                    <SideBarButton open={open} setOpen={setOpen} />
-                    <Link to="/" style={{ display: "flex" }}>
-                        <img src="/logo.png" alt="logo" width={160} />
-                    </Link>
-                    <Box width="100%" />
-                </Box>
-                <Divider />
-                <Box m={3}>
-                    <Outlet />
-                </Box>
+            <Box width={{ md: `calc(100% - 264px)` }} flexGrow={1} m={3}>
+                <Outlet />
             </Box>
         </Box>
     );

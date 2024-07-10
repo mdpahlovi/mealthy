@@ -8,9 +8,14 @@ import Signin from "@/pages/auth/signin";
 
 import DashboardLayout from "@/layouts/dashboard";
 import Dashboard from "@/pages/dashboard/home";
+import AdminRoute from "@/router/AdminRoute";
 import ProtectedRoute from "@/router/ProtectedRoute";
 
 import NotFound from "@/pages/not-found";
+import Users from "@/pages/dashboard/users";
+import Items from "@/pages/dashboard/items";
+import Meals from "@/pages/dashboard/meals";
+import Schedules from "@/pages/dashboard/schedules";
 
 export const router = createBrowserRouter([
     {
@@ -30,6 +35,38 @@ export const router = createBrowserRouter([
                     <ProtectedRoute>
                         <Dashboard />
                     </ProtectedRoute>
+                ),
+            },
+            {
+                path: "users",
+                element: (
+                    <AdminRoute>
+                        <Users />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "items",
+                element: (
+                    <AdminRoute>
+                        <Items />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "meals",
+                element: (
+                    <AdminRoute>
+                        <Meals />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "schedules",
+                element: (
+                    <AdminRoute>
+                        <Schedules />
+                    </AdminRoute>
                 ),
             },
         ],
