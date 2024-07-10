@@ -1,8 +1,10 @@
 import httpStatus from "http-status";
+import config from "../../../config";
 import { compare, hash } from "bcrypt";
 import ApiError from "../../../errors/ApiError";
 import { prisma } from "../../../shared/prisma";
 import { exclude } from "../../../shared/exclude";
+import { jwtHelpers } from "../../../helpers/jwtHelpers";
 
 type SignupUserPayload = { name: string; email: string; password: string };
 type SigninUserPayload = { email: string; password: string };
@@ -17,7 +19,8 @@ const signupUser = async (payload: SignupUserPayload) => {
     const user = await prisma.user.create({ data: { ...payload, role: "USER" }, select });
 
     const result = exclude(user, ["password"]);
-    return result;
+    const accessToken = jwtHelpers.createToken(result, config.jwt.secret!, "7d");
+    return { user: result, token: accessToken };
 };
 
 const signinUser = async (payload: SigninUserPayload) => {
@@ -33,7 +36,8 @@ const signinUser = async (payload: SigninUserPayload) => {
     }
 
     const result = exclude(user, ["password", "isBanned"]);
-    return result;
+    const accessToken = jwtHelpers.createToken(result, config.jwt.secret!, "7d");
+    return { user: result, token: accessToken };
 };
 
 export const AuthService = { signupUser, signinUser };

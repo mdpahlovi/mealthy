@@ -1,18 +1,17 @@
-import { NextFunction, Request, Response } from "express";
+import config from "../../config";
 import httpStatus from "http-status";
 import { Secret } from "jsonwebtoken";
-import config from "../../config";
+import { Role } from "@prisma/client";
 import ApiError from "../../errors/ApiError";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
+import { NextFunction, Request, Response } from "express";
 
 const auth =
-    (...requiredRoles: string[]) =>
+    (...requiredRoles: Role[]) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const token = req.headers.authorization;
-            if (!token) {
-                throw new ApiError(httpStatus.UNAUTHORIZED, "You are not Authorized");
-            }
+            if (!token) throw new ApiError(httpStatus.UNAUTHORIZED, "UnAuthorized");
 
             let verifiedUser = null;
             verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
