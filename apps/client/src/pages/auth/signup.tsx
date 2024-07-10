@@ -1,8 +1,12 @@
 import * as yup from "yup";
+import toast from "react-hot-toast";
 import { Link } from "@/components/ui";
 import AuthLayout from "@/layouts/auth";
 import { useMutation } from "react-query";
 import { baseAxios } from "@/utilities/axios";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/redux/hooks";
+import { setUser } from "@/redux/auth/authSlice";
 import { Stack, Typography } from "@mui/material";
 import { Form, FormInput, FormSubmit } from "@/components/form";
 
@@ -26,12 +30,21 @@ const signupUser = async (credentials: { name: string; email: string; password: 
 };
 
 export default function Signup() {
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
     const { mutate, isLoading } = useMutation(signupUser, {
         onSuccess: (data) => {
-            console.log("Sign-in successful:", data);
+            if (data?.data) {
+                // @ts-ignore
+                toast.success(data?.message);
+                dispatch(setUser(data?.data));
+                navigate("/dashboard");
+            }
         },
         onError: (error) => {
-            console.error("Sign-in error:", error);
+            // @ts-ignore
+            toast.error(error?.message);
         },
     });
 
