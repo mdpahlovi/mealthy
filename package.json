@@ -1,0 +1,17 @@
+{
+    "name": "mealthy",
+    "private": true,
+    "scripts": {
+        "dev": "dotenv -- turbo dev",
+        "build": "dotenv -- turbo build",
+        "start": "turbo start"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^7.4.2",
+        "turbo": "latest"
+    },
+    "packageManager": "pnpm@9.1.0",
+    "engines": {
+        "node": ">=18"
+    }
+}
