@@ -7,12 +7,14 @@ import { exclude } from "../../../shared/exclude";
 type SignupUserPayload = { name: string; email: string; password: string };
 type SigninUserPayload = { email: string; password: string };
 
+const select = { id: true, name: true, role: true, email: true, password: true, isBanned: true };
+
 const signupUser = async (payload: SignupUserPayload) => {
     const isExist = await prisma.user.findUnique({ where: { email: payload.email } });
     if (isExist) throw new ApiError(httpStatus.BAD_REQUEST, "User Already Exists...!");
 
     payload.password = await hash(payload.password, 12);
-    const user = await prisma.user.create({ data: { ...payload, role: "USER" } });
+    const user = await prisma.user.create({ data: { ...payload, role: "USER" }, select });
 
     const result = exclude(user, ["password"]);
     return result;
@@ -21,10 +23,7 @@ const signupUser = async (payload: SignupUserPayload) => {
 const signinUser = async (payload: SigninUserPayload) => {
     const { email, password } = payload;
 
-    const user = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true, name: true, role: true, email: true, password: true, isBanned: true },
-    });
+    const user = await prisma.user.findUnique({ where: { email }, select });
 
     if (!user) throw new ApiError(httpStatus.NOT_FOUND, "User doesn't exist...!");
     if (user.isBanned) throw new ApiError(httpStatus.NOT_FOUND, "You are temporary banned...!");

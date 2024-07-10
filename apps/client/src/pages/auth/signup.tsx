@@ -1,10 +1,10 @@
-import axios from "axios";
 import * as yup from "yup";
 import { Link } from "@/components/ui";
 import AuthLayout from "@/layouts/auth";
+import { useMutation } from "react-query";
+import { baseAxios } from "@/utilities/axios";
 import { Stack, Typography } from "@mui/material";
 import { Form, FormInput, FormSubmit } from "@/components/form";
-import { useMutation } from "react-query";
 
 const signupSchema = yup.object().shape({
     first_name: yup.string().required("First Name is required"),
@@ -22,8 +22,7 @@ const signupSchema = yup.object().shape({
 });
 
 const signupUser = async (credentials: { name: string; email: string; password: string }) => {
-    const response = await axios.post("/auth/signup", credentials);
-    return response.data;
+    return await baseAxios.post("/auth/signup", credentials);
 };
 
 export default function Signup() {

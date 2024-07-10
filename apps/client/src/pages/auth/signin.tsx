@@ -1,8 +1,8 @@
-import axios from "axios";
 import * as yup from "yup";
 import { Link } from "@/components/ui";
 import AuthLayout from "@/layouts/auth";
 import { useMutation } from "react-query";
+import { baseAxios } from "@/utilities/axios";
 import { Stack, Typography } from "@mui/material";
 import { Form, FormInput, FormSubmit } from "@/components/form";
 
@@ -16,8 +16,7 @@ const signinSchema = yup.object().shape({
 });
 
 const signinUser = async (credentials: { email: string; password: string }) => {
-    const response = await axios.post("/auth/signin", credentials);
-    return response.data;
+    return await baseAxios.post("/auth/signin", credentials);
 };
 
 export default function Signin() {
