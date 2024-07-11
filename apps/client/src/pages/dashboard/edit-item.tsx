@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Form, FormInput, FormSubmit } from "@/components/form";
+import { Form, FormInput, FormSelect, FormSubmit } from "@/components/form";
 
 const createItemSchema = yup.object().shape({
     name: yup.string().required("Item Name is required"),
@@ -47,7 +47,7 @@ export default function EditItem() {
             onSubmit={(data) => mutate(data)}
         >
             <FormInput name="name" label="Item Name" />
-            <FormInput name="category" label="Category" />
+            <FormSelect name="category" label="Category" items={["PROTEIN", "STARCH", "VEG", "OTHER"]} />
             <FormSubmit loading={editLoading}>Edit Item</FormSubmit>
         </Form>
     );

@@ -27,7 +27,7 @@ const columns: Column<Item> = [
 
             return (
                 <>
-                    <Link to={`/dashboard/edit-user/${data?.id}`} state={data}>
+                    <Link to={`/dashboard/edit-item/${data?.id}`} state={data}>
                         <IconButton>
                             <EditNote />
                         </IconButton>
@@ -36,7 +36,7 @@ const columns: Column<Item> = [
                         color="error"
                         onClick={() =>
                             deleteItem()
-                                .then(() => queryClient.invalidateQueries("user"))
+                                .then(() => queryClient.invalidateQueries("item"))
                                 .catch((error) => toast.error(error?.message))
                         }
                     >
