@@ -11,8 +11,7 @@ import { Stack, Typography } from "@mui/material";
 import { Form, FormInput, FormSubmit } from "@/components/form";
 
 const signupSchema = yup.object().shape({
-    first_name: yup.string().required("First Name is required"),
-    last_name: yup.string().required("Last Name is required"),
+    name: yup.string().required("Full Name is required"),
     email: yup.string().required("Email is required").email("Email is invalid"),
     password: yup
         .string()
@@ -60,14 +59,11 @@ export default function Signup() {
             </Stack>
 
             <Form
-                defaultValues={{ first_name: "", last_name: "", email: "", password: "", c_password: "" }}
+                defaultValues={{ name: "", email: "", password: "", c_password: "" }}
                 validationSchema={signupSchema}
-                onSubmit={({ first_name, last_name, c_password, ...data }) => mutate({ name: `${first_name} ${last_name}`, ...data })}
+                onSubmit={({ c_password, ...data }) => mutate(data)}
             >
-                <Stack direction={{ sm: "row" }} gap={3}>
-                    <FormInput name="first_name" label="First Name" />
-                    <FormInput name="last_name" label="Last Name" />
-                </Stack>
+                <FormInput name="name" label="Full Name" />
                 <FormInput type="email" name="email" label="Your Email" />
                 <FormInput type="password" name="password" label="Your Password" />
                 <FormInput type="password" name="c_password" label="Confirm Password" />

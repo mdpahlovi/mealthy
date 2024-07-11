@@ -7,8 +7,7 @@ import { Form, FormInput, FormSubmit } from "@/components/form";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 
 const signupSchema = yup.object().shape({
-    first_name: yup.string().required("First Name is required"),
-    last_name: yup.string().required("Last Name is required"),
+    name: yup.string().required("Full Name is required"),
     email: yup.string().required("Email is required").email("Email is invalid"),
     password: yup
         .string()

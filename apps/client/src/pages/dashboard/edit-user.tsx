@@ -1,16 +1,17 @@
 import * as yup from "yup";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
+import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 
 import { Form, FormInput, FormSubmit } from "@/components/form";
-import { useAxiosRequest } from "@/hooks/useAxiosRequest";
-import type { IApiResponse } from "@/types";
-import type { User } from "@prisma/client";
 
-const signupSchema = yup.object().shape({
-    first_name: yup.string().required("First Name is required"),
-    last_name: yup.string().required("Last Name is required"),
+import type { User } from "@prisma/client";
+import type { IApiResponse } from "@/types";
+
+const createUserSchema = yup.object().shape({
+    name: yup.string().required("Full Name is required"),
     email: yup.string().required("Email is required").email("Email is invalid"),
     password: yup
         .string()
@@ -28,8 +29,14 @@ export default function EditUser() {
     const navigate = useNavigate();
     const baseAxios = useAxiosRequest();
     const queryClient = useQueryClient();
+    const [data, setData] = useState<IApiResponse<User>>();
 
-    const { data, isLoading } = useQuery<IApiResponse<User>>({ queryFn: async () => await baseAxios.get(`/user/${params.id}`) });
+    useEffect(() => {
+        baseAxios
+            .get(`/user/${params.id}`)
+            .then((data: any) => setData(data))
+            .catch(() => navigate("/dashboard/users"));
+    }, []);
 
     const editUser = async (credentials: { name: string; email: string; password: string }) => {
         return await baseAxios.patch(`/user/${params.id}`, credentials);
@@ -50,28 +57,22 @@ export default function EditUser() {
         },
     });
 
-    if (isLoading) {
-        return <div>Loading</div>;
-    } else {
-        return (
-            <Form
-                defaultValues={{
-                    first_name: data?.data?.name.split(" ")[0]!,
-                    last_name: data?.data?.name.split(" ")[1]!,
-                    email: data?.data?.email!,
-                    password: "",
-                    c_password: "",
-                }}
-                validationSchema={signupSchema}
-                onSubmit={({ first_name, last_name, c_password, ...data }) => mutate({ name: `${first_name} ${last_name}`, ...data })}
-            >
-                <FormInput name="first_name" label="First Name" />
-                <FormInput name="last_name" label="Last Name" />
-                <FormInput type="email" name="email" label="Your Email" />
-                <FormInput type="password" name="password" label="Your Password" />
-                <FormInput type="password" name="c_password" label="Confirm Password" />
-                <FormSubmit loading={editLoading}>Edit User</FormSubmit>
-            </Form>
-        );
-    }
+    return (
+        <Form
+            defaultValues={{
+                name: data?.data?.name ? data?.data?.name : "",
+                email: data?.data?.email ? data?.data?.email : "",
+                password: "",
+                c_password: "",
+            }}
+            validationSchema={createUserSchema}
+            onSubmit={({ c_password, ...data }) => mutate(data)}
+        >
+            <FormInput name="name" label="Full Name" />
+            <FormInput type="email" name="email" label="Your Email" />
+            <FormInput type="password" name="password" label="Your Password" />
+            <FormInput type="password" name="c_password" label="Confirm Password" />
+            <FormSubmit loading={editLoading}>Edit User</FormSubmit>
+        </Form>
+    );
 }

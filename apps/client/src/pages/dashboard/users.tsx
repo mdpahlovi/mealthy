@@ -9,6 +9,7 @@ import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 import { EditNote, Delete } from "@mui/icons-material";
 import { Table, TableSearch } from "@/components/table";
 import { Box, Button, IconButton } from "@mui/material";
+import UserLoader from "@/components/dashboard/users/user-loader";
 
 import type { User } from "@prisma/client";
 import type { Column, GenericErrorResponse, IApiResponse } from "@/types";
@@ -97,7 +98,6 @@ export default function Users() {
 
     return (
         <div>
-            {isLoading}
             <Box display="flex" justifyContent="end" gap={3} mb={3}>
                 <TableSearch search={search} label="User" />
                 {/* @ts-ignore */}
@@ -105,14 +105,16 @@ export default function Users() {
                     Create User
                 </Button>
             </Box>
-            {data?.data ? (
+            {isLoading ? (
+                <UserLoader />
+            ) : (
                 <Table
-                    data={data?.data}
                     columns={columns}
+                    data={data?.data || []}
                     axiosInstance={baseAxios}
                     pagination={{ page, size, total: data?.meta?.total! }}
                 />
-            ) : null}
+            )}
         </div>
     );
 }
