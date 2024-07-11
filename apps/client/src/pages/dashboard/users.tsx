@@ -54,16 +54,16 @@ const columns: Column<User> = [
     { header: "Created At", cell: ({ createdAt }) => dayjs(createdAt).format("LL") },
     {
         header: "Actions",
-        cell: ({ id }, axios, queryClient) => {
-            const deleteUser = async () => await axios.delete(`/user/${id}`);
+        cell: (data, axios, queryClient) => {
+            const deleteUser = async () => await axios.delete(`/user/${data?.id}`);
 
             return (
                 <>
-                    {/* @ts-ignore */}
-                    <IconButton LinkComponent={Link} to={`/dashboard/edit-user/${id}`}>
-                        <EditNote />
-                    </IconButton>
-                    {/* @ts-ignore */}
+                    <Link to={`/dashboard/edit-user/${data?.id}`} state={data}>
+                        <IconButton>
+                            <EditNote />
+                        </IconButton>
+                    </Link>
                     <IconButton
                         color="error"
                         onClick={() =>

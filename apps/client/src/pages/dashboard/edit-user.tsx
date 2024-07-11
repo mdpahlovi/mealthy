@@ -1,14 +1,10 @@
 import * as yup from "yup";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import { Form, FormInput, FormSubmit } from "@/components/form";
-
-import type { User } from "@prisma/client";
-import type { IApiResponse } from "@/types";
 
 const createUserSchema = yup.object().shape({
     name: yup.string().required("Full Name is required"),
@@ -25,21 +21,17 @@ const createUserSchema = yup.object().shape({
 });
 
 export default function EditUser() {
-    const params = useParams();
     const navigate = useNavigate();
+    const { state } = useLocation();
     const baseAxios = useAxiosRequest();
     const queryClient = useQueryClient();
-    const [data, setData] = useState<IApiResponse<User>>();
 
     useEffect(() => {
-        baseAxios
-            .get(`/user/${params.id}`)
-            .then((data: any) => setData(data))
-            .catch(() => navigate("/dashboard/users"));
-    }, []);
+        !state || !state?.id ? navigate("/dashboard/users") : null;
+    }, [state]);
 
-    const editUser = async (credentials: { name: string; email: string; password: string }) => {
-        return await baseAxios.patch(`/user/${params.id}`, credentials);
+    const editUser = async (data: { name: string; email: string; password: string }) => {
+        return await baseAxios.patch(`/user/${state?.id}`, data);
     };
 
     const { mutate, isLoading: editLoading } = useMutation(editUser, {
@@ -59,17 +51,12 @@ export default function EditUser() {
 
     return (
         <Form
-            defaultValues={{
-                name: data?.data?.name ? data?.data?.name : "",
-                email: data?.data?.email ? data?.data?.email : "",
-                password: "",
-                c_password: "",
-            }}
+            defaultValues={{ name: state?.name ? state?.name : "", email: state?.email ? state?.email : "", password: "", c_password: "" }}
             validationSchema={createUserSchema}
             onSubmit={({ c_password, ...data }) => mutate(data)}
         >
             <FormInput name="name" label="Full Name" />
-            <FormInput type="email" name="email" label="Your Email" />
+            <FormInput type="email" name="email" label="Your Email" disabled />
             <FormInput type="password" name="password" label="Your Password" />
             <FormInput type="password" name="c_password" label="Confirm Password" />
             <FormSubmit loading={editLoading}>Edit User</FormSubmit>

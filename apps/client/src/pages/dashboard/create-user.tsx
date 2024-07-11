@@ -25,8 +25,8 @@ export default function CreateUser() {
     const baseAxios = useAxiosRequest();
     const queryClient = useQueryClient();
 
-    const createUser = async (credentials: { name: string; email: string; password: string }) => {
-        return await baseAxios.post("/user/create", credentials);
+    const createUser = async (data: { name: string; email: string; password: string }) => {
+        return await baseAxios.post("/user/create", data);
     };
 
     const { mutate, isLoading } = useMutation(createUser, {
@@ -46,12 +46,11 @@ export default function CreateUser() {
 
     return (
         <Form
-            defaultValues={{ first_name: "", last_name: "", email: "", password: "", c_password: "" }}
+            defaultValues={{ name: "", email: "", password: "", c_password: "" }}
             validationSchema={signupSchema}
-            onSubmit={({ first_name, last_name, c_password, ...data }) => mutate({ name: `${first_name} ${last_name}`, ...data })}
+            onSubmit={({ c_password, ...data }) => mutate(data)}
         >
-            <FormInput name="first_name" label="First Name" />
-            <FormInput name="last_name" label="Last Name" />
+            <FormInput name="name" label="Full Name" />
             <FormInput type="email" name="email" label="Your Email" />
             <FormInput type="password" name="password" label="Your Password" />
             <FormInput type="password" name="c_password" label="Confirm Password" />
