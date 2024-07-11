@@ -1,7 +1,5 @@
 import axios from "axios";
-
-type GenericErrorMessage = { path: string | number; message: string };
-type GenericErrorResponse = { statusCode: number; message: string; errorMessages: GenericErrorMessage[] };
+import type { GenericErrorResponse } from "@/types";
 
 export const BASE_URL = "http://localhost:5000/api/v1";
 export const baseAxios = axios.create({ baseURL: BASE_URL, timeout: 60000 });

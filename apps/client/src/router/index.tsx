@@ -16,6 +16,10 @@ import Users from "@/pages/dashboard/users";
 import Items from "@/pages/dashboard/items";
 import Meals from "@/pages/dashboard/meals";
 import Schedules from "@/pages/dashboard/schedules";
+import CreateUser from "@/pages/dashboard/create-user";
+import CreateItem from "@/pages/dashboard/create-item";
+import EditUser from "@/pages/dashboard/edit-user";
+import EditItem from "@/pages/dashboard/edit-item";
 
 export const router = createBrowserRouter([
     {
@@ -27,16 +31,13 @@ export const router = createBrowserRouter([
     { path: "/signup", element: <Signup /> },
     {
         path: "/dashboard",
-        element: <DashboardLayout />,
+        element: (
+            <ProtectedRoute>
+                <DashboardLayout />
+            </ProtectedRoute>
+        ),
         children: [
-            {
-                path: "/dashboard",
-                element: (
-                    <ProtectedRoute>
-                        <Dashboard />
-                    </ProtectedRoute>
-                ),
-            },
+            { path: "/dashboard", element: <Dashboard /> },
             {
                 path: "users",
                 element: (
@@ -46,10 +47,42 @@ export const router = createBrowserRouter([
                 ),
             },
             {
+                path: "create-user",
+                element: (
+                    <AdminRoute>
+                        <CreateUser />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "edit-user/:id",
+                element: (
+                    <AdminRoute>
+                        <EditUser />
+                    </AdminRoute>
+                ),
+            },
+            {
                 path: "items",
                 element: (
                     <AdminRoute>
                         <Items />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "create-item",
+                element: (
+                    <AdminRoute>
+                        <CreateItem />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "edit-item/:id",
+                element: (
+                    <AdminRoute>
+                        <EditItem />
                     </AdminRoute>
                 ),
             },

@@ -5,7 +5,7 @@ import { SignOutButton } from "@/layouts/dashboard/components";
 import { Stack, Box, Button, ButtonProps, Typography } from "@mui/material";
 import { useDashboardRoutes } from "@/layouts/dashboard/useDashboardRoutes";
 
-type StyledLinkButtonProps = { href?: string; selected?: boolean; children?: React.ReactNode } & ButtonProps;
+type StyledLinkButtonProps = { to?: string; selected?: boolean; children?: React.ReactNode } & ButtonProps;
 
 function SideBarItems() {
     const { pathname } = useLocation();
@@ -21,7 +21,7 @@ function SideBarItems() {
     }));
 
     return routes.map(({ href, text, icon }, idx) => (
-        <StyledLinkButton key={idx} href={href} selected={href === pathname} startIcon={createElement(icon)}>
+        <StyledLinkButton key={idx} to={href} selected={href === pathname} startIcon={createElement(icon)}>
             {text}
         </StyledLinkButton>
     ));
