@@ -22,8 +22,7 @@ export default function Meals() {
         queryFn: async () => await baseAxios.get("/meal"),
     });
 
-    const deleteMeal = async (id: string) => await baseAxios.delete(`/meal/${id}`);
-    const { mutate } = useMutation(deleteMeal, {
+    const { mutate } = useMutation(async (id: string) => await baseAxios.delete(`/meal/${id}`), {
         onSuccess: () => {
             refetch();
         },

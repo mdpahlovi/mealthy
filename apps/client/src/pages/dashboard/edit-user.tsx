@@ -20,6 +20,8 @@ const createUserSchema = yup.object().shape({
         .oneOf([yup.ref("password")], "Your passwords do not match."),
 });
 
+type UserInput = { name: string; email: string; password: string };
+
 export default function EditUser() {
     const navigate = useNavigate();
     const { state } = useLocation();
@@ -30,11 +32,7 @@ export default function EditUser() {
         !state || !state?.id ? navigate("/dashboard/users") : null;
     }, [state]);
 
-    const editUser = async (data: { name: string; email: string; password: string }) => {
-        return await baseAxios.patch(`/user/${state?.id}`, data);
-    };
-
-    const { mutate, isLoading: editLoading } = useMutation(editUser, {
+    const { mutate, isLoading: editLoading } = useMutation(async (data: UserInput) => await baseAxios.patch(`/user/${state?.id}`, data), {
         onSuccess: (data) => {
             if (data?.data) {
                 // @ts-ignore

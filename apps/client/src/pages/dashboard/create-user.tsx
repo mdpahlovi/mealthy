@@ -25,24 +25,23 @@ export default function CreateUser() {
     const baseAxios = useAxiosRequest();
     const queryClient = useQueryClient();
 
-    const createUser = async (data: { name: string; email: string; password: string }) => {
-        return await baseAxios.post("/user/create", data);
-    };
-
-    const { mutate, isLoading } = useMutation(createUser, {
-        onSuccess: (data) => {
-            if (data?.data) {
+    const { mutate, isLoading } = useMutation(
+        async (data: { name: string; email: string; password: string }) => await baseAxios.post("/user/create", data),
+        {
+            onSuccess: (data) => {
+                if (data?.data) {
+                    // @ts-ignore
+                    toast.success(data?.message);
+                    queryClient.invalidateQueries("user");
+                    navigate("/dashboard/users");
+                }
+            },
+            onError: (error) => {
                 // @ts-ignore
-                toast.success(data?.message);
-                queryClient.invalidateQueries("user");
-                navigate("/dashboard/users");
-            }
-        },
-        onError: (error) => {
-            // @ts-ignore
-            toast.error(error?.message);
-        },
-    });
+                toast.error(error?.message);
+            },
+        }
+    );
 
     return (
         <Form

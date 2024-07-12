@@ -1,7 +1,7 @@
 import { useAppSelector } from "@/redux/hooks";
 import type { SvgIconTypeMap } from "@mui/material/SvgIcon";
 import type { OverridableComponent } from "@mui/material/OverridableComponent";
-import { DashboardRounded, ManageAccounts, Inventory, FoodBank, EventNote } from "@mui/icons-material";
+import { DashboardRounded, ManageAccounts, Inventory, FoodBank, EventNote, Bookmark } from "@mui/icons-material";
 
 type RouteType = { href: string; text: string; icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string } };
 
@@ -11,7 +11,7 @@ export function useDashboardRoutes(): RouteType[] {
     let routes: RouteType[] = [];
     switch (user?.role) {
         case "USER":
-            routes = [];
+            routes = [{ href: "/dashboard/orders", text: "Order Meal", icon: Bookmark }];
             break;
         case "ADMIN":
             routes = [

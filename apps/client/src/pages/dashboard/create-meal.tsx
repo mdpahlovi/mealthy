@@ -27,10 +27,7 @@ export default function CreateMeal() {
         queryFn: async () => await baseAxios.get("/item"),
     });
 
-    const createMeal = async (value: Value) => {
-        return await baseAxios.post("/meal/create", value);
-    };
-    const { mutate, isLoading } = useMutation(createMeal, {
+    const { mutate, isLoading } = useMutation(async (value: Value) => await baseAxios.post("/meal/create", value), {
         onSuccess: (data) => {
             if (data?.data) {
                 // @ts-ignore

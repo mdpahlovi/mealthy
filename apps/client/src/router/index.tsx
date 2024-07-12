@@ -7,11 +7,12 @@ import Signup from "@/pages/auth/signup";
 import Signin from "@/pages/auth/signin";
 
 import DashboardLayout from "@/layouts/dashboard";
-import Dashboard from "@/pages/dashboard/home";
+import UserRoute from "@/router/UserRoute";
 import AdminRoute from "@/router/AdminRoute";
 import ProtectedRoute from "@/router/ProtectedRoute";
 
 import NotFound from "@/pages/not-found";
+import Dashboard from "@/pages/dashboard/home";
 import Users from "@/pages/dashboard/users";
 import Items from "@/pages/dashboard/items";
 import Meals from "@/pages/dashboard/meals";
@@ -21,6 +22,8 @@ import CreateItem from "@/pages/dashboard/create-item";
 import EditUser from "@/pages/dashboard/edit-user";
 import EditItem from "@/pages/dashboard/edit-item";
 import CreateMeal from "@/pages/dashboard/create-meal";
+
+import Orders from "@/pages/dashboard/orders";
 
 export const router = createBrowserRouter([
     {
@@ -101,6 +104,14 @@ export const router = createBrowserRouter([
                     <AdminRoute>
                         <CreateMeal />
                     </AdminRoute>
+                ),
+            },
+            {
+                path: "orders",
+                element: (
+                    <UserRoute>
+                        <Orders />
+                    </UserRoute>
                 ),
             },
             {

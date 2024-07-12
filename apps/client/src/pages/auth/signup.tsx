@@ -24,15 +24,13 @@ const signupSchema = yup.object().shape({
         .oneOf([yup.ref("password")], "Your passwords do not match."),
 });
 
-const signupUser = async (credentials: { name: string; email: string; password: string }) => {
-    return await baseAxios.post("/auth/signup", credentials);
-};
+type CredentialInput = { name: string; email: string; password: string };
 
 export default function Signup() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const { mutate, isLoading } = useMutation(signupUser, {
+    const { mutate, isLoading } = useMutation(async (credentials: CredentialInput) => await baseAxios.post("/auth/signup", credentials), {
         onSuccess: (data) => {
             if (data?.data) {
                 // @ts-ignore

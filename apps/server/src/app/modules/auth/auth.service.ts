@@ -29,7 +29,7 @@ const signinUser = async (payload: SigninUserPayload) => {
     const user = await prisma.user.findUnique({ where: { email }, select });
 
     if (!user) throw new ApiError(httpStatus.NOT_FOUND, "User doesn't exist...!");
-    if (user.isBanned) throw new ApiError(httpStatus.NOT_FOUND, "You are temporary banned...!");
+    if (user.isBanned) throw new ApiError(httpStatus.BAD_REQUEST, "You are temporary banned...!");
 
     if (!user?.password || !(await compare(password, user.password))) {
         throw new ApiError(httpStatus.BAD_REQUEST, "Password doesn't match...!");

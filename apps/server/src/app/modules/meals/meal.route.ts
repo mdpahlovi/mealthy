@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/create", auth("ADMIN"), MealController.createMeal);
 
-router.get("/", auth("ADMIN"), MealController.getAllMeal);
+router.get("/", auth("USER", "ADMIN"), MealController.getAllMeal);
 
 router.delete("/:id", auth("ADMIN"), MealController.deleteMeal);
 

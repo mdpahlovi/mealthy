@@ -19,28 +19,27 @@ const signinSchema = yup.object().shape({
         .max(40, "Password must not exceed 40 characters"),
 });
 
-const signinUser = async (credentials: { email: string; password: string }) => {
-    return await baseAxios.post("/auth/signin", credentials);
-};
-
 export default function Signin() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const { mutate, isLoading } = useMutation(signinUser, {
-        onSuccess: (data) => {
-            if (data?.data) {
+    const { mutate, isLoading } = useMutation(
+        async (credentials: { email: string; password: string }) => await baseAxios.post("/auth/signin", credentials),
+        {
+            onSuccess: (data) => {
+                if (data?.data) {
+                    // @ts-ignore
+                    toast.success(data?.message);
+                    dispatch(setUser(data?.data));
+                    navigate("/dashboard");
+                }
+            },
+            onError: (error) => {
                 // @ts-ignore
-                toast.success(data?.message);
-                dispatch(setUser(data?.data));
-                navigate("/dashboard");
-            }
-        },
-        onError: (error) => {
-            // @ts-ignore
-            toast.error(error?.message);
-        },
-    });
+                toast.error(error?.message);
+            },
+        }
+    );
 
     return (
         <AuthLayout>

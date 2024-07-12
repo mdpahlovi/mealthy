@@ -21,24 +21,23 @@ export default function EditItem() {
         !state || !state?.id ? navigate("/dashboard/items") : null;
     }, [state]);
 
-    const editItem = async (data: { name: string; category: string }) => {
-        return await baseAxios.patch(`/item/${state?.id}`, data);
-    };
-
-    const { mutate, isLoading: editLoading } = useMutation(editItem, {
-        onSuccess: (data) => {
-            if (data?.data) {
+    const { mutate, isLoading: editLoading } = useMutation(
+        async (data: { name: string; category: string }) => await baseAxios.patch(`/item/${state?.id}`, data),
+        {
+            onSuccess: (data) => {
+                if (data?.data) {
+                    // @ts-ignore
+                    toast.success(data?.message);
+                    queryClient.invalidateQueries("item");
+                    navigate("/dashboard/items");
+                }
+            },
+            onError: (error) => {
                 // @ts-ignore
-                toast.success(data?.message);
-                queryClient.invalidateQueries("item");
-                navigate("/dashboard/items");
-            }
-        },
-        onError: (error) => {
-            // @ts-ignore
-            toast.error(error?.message);
-        },
-    });
+                toast.error(error?.message);
+            },
+        }
+    );
 
     return (
         <Form

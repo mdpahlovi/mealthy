@@ -15,24 +15,23 @@ export default function CreateItem() {
     const baseAxios = useAxiosRequest();
     const queryClient = useQueryClient();
 
-    const createItem = async (data: { name: string; category: string }) => {
-        return await baseAxios.post("/item/create", data);
-    };
-
-    const { mutate, isLoading } = useMutation(createItem, {
-        onSuccess: (data) => {
-            if (data?.data) {
+    const { mutate, isLoading } = useMutation(
+        async (data: { name: string; category: string }) => await baseAxios.post("/item/create", data),
+        {
+            onSuccess: (data) => {
+                if (data?.data) {
+                    // @ts-ignore
+                    toast.success(data?.message);
+                    queryClient.invalidateQueries("item");
+                    navigate("/dashboard/items");
+                }
+            },
+            onError: (error) => {
                 // @ts-ignore
-                toast.success(data?.message);
-                queryClient.invalidateQueries("item");
-                navigate("/dashboard/items");
-            }
-        },
-        onError: (error) => {
-            // @ts-ignore
-            toast.error(error?.message);
-        },
-    });
+                toast.error(error?.message);
+            },
+        }
+    );
 
     return (
         <Form defaultValues={{ name: "", category: "" }} validationSchema={createItemSchema} onSubmit={(data) => mutate(data)}>
