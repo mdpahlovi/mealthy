@@ -1,6 +1,5 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 import { validate } from "@/components/dashboard/meals/validate";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -15,7 +14,6 @@ export type Error = { day: string; items: string };
 export type Value = { day: string; items: string[] };
 
 export default function CreateMeal() {
-    const navigate = useNavigate();
     const baseAxios = useAxiosRequest();
     const queryClient = useQueryClient();
 
@@ -33,7 +31,6 @@ export default function CreateMeal() {
                 // @ts-ignore
                 toast.success(data?.message);
                 queryClient.invalidateQueries("meal");
-                navigate("/dashboard/meals");
             }
         },
         onError: (error) => {

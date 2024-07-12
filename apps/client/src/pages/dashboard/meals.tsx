@@ -1,28 +1,31 @@
-import dayjs from "dayjs";
-import LocalizedFormat from "dayjs/plugin/localizedFormat";
-
+import React from "react";
 import { useMutation, useQuery } from "react-query";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 
-import { Link } from "react-router-dom";
-import { Delete, Send } from "@mui/icons-material";
-import { Box, Button, Typography, List, ListItemIcon, ListItemText, ListItem, IconButton, Paper } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { Link, useSearchParams } from "react-router-dom";
+import { Box, Button, Typography, IconButton, Paper, styled, Divider } from "@mui/material";
 
 import type { IApiResponse } from "@/types";
 import type { Item, Meal, MealItem } from "@prisma/client";
-
-dayjs.extend(LocalizedFormat);
+import { Pagination } from "@/components/ui";
 
 type IMeal = { mealItems: ({ item: Item } & MealItem)[] } & Meal;
 
 export default function Meals() {
     const baseAxios = useAxiosRequest();
-    const { data, isLoading, refetch } = useQuery<IApiResponse<IMeal[]>>({
-        queryKey: "meal",
-        queryFn: async () => await baseAxios.get("/meal"),
+    const [searchParams] = useSearchParams();
+
+    const page = searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1;
+    const size = searchParams.get("size") ? parseInt(searchParams.get("size")!) : 6;
+
+    const { data, isLoading, isRefetching, refetch } = useQuery<IApiResponse<IMeal[]>>({
+        queryKey: ["meal", { page, size }],
+        queryFn: async () => await baseAxios.get("/meal", { params: { page, size } }),
+        keepPreviousData: true,
     });
 
-    const { mutate } = useMutation(async (id: string) => await baseAxios.delete(`/meal/${id}`), {
+    const { mutate, isLoading: deleteLoading } = useMutation(async (id: string) => await baseAxios.delete(`/meal/${id}`), {
         onSuccess: () => {
             refetch();
         },
@@ -44,39 +47,46 @@ export default function Meals() {
                     <Typography>Loading...</Typography>
                 </Box>
             ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
-                    {data?.data?.map(({ id, day, mealItems, createdAt }) => (
-                        <Paper sx={{ pt: 0.75 }}>
-                            <List
-                                key={id}
-                                dense
-                                subheader={
-                                    <ListItem
-                                        secondaryAction={
-                                            <IconButton edge="end" onClick={() => mutate(id)}>
-                                                <Delete />
-                                            </IconButton>
-                                        }
-                                    >
-                                        <ListItemText
-                                            primary={dayjs(createdAt).format("LL") + ". " + day.charAt(0) + day.slice(1).toLowerCase()}
-                                        />
-                                    </ListItem>
-                                }
-                            >
-                                {mealItems?.map(({ item: { id, name, category } }) => (
-                                    <ListItem key={id}>
-                                        <ListItemIcon>
-                                            <Send />
-                                        </ListItemIcon>
-                                        <ListItemText primary={name} secondary={category.charAt(0) + category.slice(1).toLowerCase()} />
-                                    </ListItem>
+                <>
+                    <MealContainer>
+                        {data?.data?.map(({ id, day, mealItems }) => (
+                            <Paper sx={{ pt: 0.25, px: 1.75 }}>
+                                <Box display="flex" justifyContent="space-between" alignItems="center">
+                                    <Typography variant="h6" fontWeight={700}>
+                                        {day.charAt(0) + day.slice(1).toLowerCase()}
+                                    </Typography>
+                                    <IconButton edge="end" onClick={() => mutate(id)} disabled={deleteLoading || isRefetching}>
+                                        <Delete />
+                                    </IconButton>
+                                </Box>
+                                {mealItems?.map(({ item: { name, category } }, idx) => (
+                                    <React.Fragment key={id}>
+                                        {idx !== 0 ? <Divider /> : null}
+                                        <Typography pb={0.75} pt={idx === 0 ? 0 : 0.75} pl={1}>
+                                            &#9755; {name},{" "}
+                                            <Typography component="span" variant="body2" color="text.secondary">
+                                                {category.charAt(0) + category.slice(1).toLowerCase()}
+                                            </Typography>
+                                        </Typography>
+                                    </React.Fragment>
                                 ))}
-                            </List>
-                        </Paper>
-                    ))}
-                </div>
+                            </Paper>
+                        ))}
+                    </MealContainer>
+                    <Pagination page={page} totalPage={Math.ceil((data?.meta?.total || 0) / size)} />
+                </>
             )}
         </>
     );
 }
+
+const MealContainer = styled(Box)(({ theme }) => ({
+    display: "grid",
+    gap: 24,
+    [theme.breakpoints.up("sm")]: {
+        gridTemplateColumns: "repeat(2, 1fr)",
+    },
+    [theme.breakpoints.up("lg")]: {
+        gridTemplateColumns: "repeat(3, 1fr)",
+    },
+}));

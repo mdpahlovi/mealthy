@@ -26,7 +26,7 @@ const columns: Column<Item> = [
             const deleteItem = async () => await axios.delete(`/item/${data?.id}`);
 
             return (
-                <>
+                <Box display="flex" justifyContent="end">
                     <Link to={`/dashboard/edit-item/${data?.id}`} state={data}>
                         <IconButton>
                             <EditNote />
@@ -42,7 +42,7 @@ const columns: Column<Item> = [
                     >
                         <Delete />
                     </IconButton>
-                </>
+                </Box>
             );
         },
     },
