@@ -9,13 +9,14 @@ type FormProps<T> = {
 
 export default function Form<T>({ onSubmit, children, defaultValues, validationSchema }: FormProps<T>) {
     const resolver = validationSchema ? yupResolver(validationSchema) : undefined;
-    const methods = useForm({ defaultValues, resolver });
-
-    const submit = (data: T) => onSubmit(data, methods.reset);
+    const methods = useForm({ defaultValues: defaultValues || undefined, resolver });
 
     return (
         <FormProvider {...methods}>
-            <form style={{ display: "flex", flexDirection: "column", gap: 16 }} onSubmit={methods.handleSubmit(submit)}>
+            <form
+                style={{ display: "flex", flexDirection: "column", gap: 16 }}
+                onSubmit={methods.handleSubmit((data) => onSubmit(data as T, methods.reset))}
+            >
                 {children}
             </form>
         </FormProvider>
