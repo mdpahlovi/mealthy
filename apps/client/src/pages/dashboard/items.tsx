@@ -65,7 +65,7 @@ export default function Items() {
     });
 
     return (
-        <div>
+        <>
             <Box display="flex" justifyContent="end" gap={3} mb={3}>
                 <TableSearch search={search} label="Item" />
                 {/* @ts-ignore */}
@@ -83,6 +83,6 @@ export default function Items() {
                     pagination={{ page, size, total: data?.meta?.total! }}
                 />
             )}
-        </div>
+        </>
     );
 }

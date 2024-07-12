@@ -20,6 +20,7 @@ import CreateUser from "@/pages/dashboard/create-user";
 import CreateItem from "@/pages/dashboard/create-item";
 import EditUser from "@/pages/dashboard/edit-user";
 import EditItem from "@/pages/dashboard/edit-item";
+import CreateMeal from "@/pages/dashboard/create-meal";
 
 export const router = createBrowserRouter([
     {
@@ -91,6 +92,14 @@ export const router = createBrowserRouter([
                 element: (
                     <AdminRoute>
                         <Meals />
+                    </AdminRoute>
+                ),
+            },
+            {
+                path: "create-meal",
+                element: (
+                    <AdminRoute>
+                        <CreateMeal />
                     </AdminRoute>
                 ),
             },

@@ -16,16 +16,13 @@ const getAllMeal = async (options: IOptions) => {
     return { meta: { page, size, total, totalPage: Math.ceil(total / size) }, data: meals };
 };
 
-const getSingleMeal = async (id: string) => {
-    return await prisma.meal.findUnique({ where: { id } });
-};
-
-const updateMeal = async (payload: Partial<Meal>, id: string) => {
-    return await prisma.meal.update({ where: { id }, data: payload });
-};
-
 const deleteMeal = async (id: string) => {
-    return await prisma.meal.delete({ where: { id } });
+    const [mealItems, meal] = await prisma.$transaction([
+        prisma.mealItem.deleteMany({ where: { mealId: id } }),
+        prisma.meal.delete({ where: { id } }),
+    ]);
+
+    return { mealItems, meal };
 };
 
-export const MealService = { createMeal, getAllMeal, getSingleMeal, updateMeal, deleteMeal };
+export const MealService = { createMeal, getAllMeal, deleteMeal };

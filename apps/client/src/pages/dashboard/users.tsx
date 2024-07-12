@@ -97,7 +97,7 @@ export default function Users() {
     });
 
     return (
-        <div>
+        <>
             <Box display="flex" justifyContent="end" gap={3} mb={3}>
                 <TableSearch search={search} label="User" />
                 {/* @ts-ignore */}
@@ -115,6 +115,6 @@ export default function Users() {
                     pagination={{ page, size, total: data?.meta?.total! }}
                 />
             )}
-        </div>
+        </>
     );
 }
