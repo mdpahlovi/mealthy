@@ -7,8 +7,12 @@
             "persistent": true
         },
         "build": {
+            "cache": false,
             "dependsOn": ["^build"]
         },
-        "start": { "dependsOn": ["^start"] }
+        "start": {
+            "cache": false,
+            "dependsOn": ["^start"]
+        }
     }
 }

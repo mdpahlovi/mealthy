@@ -101,7 +101,7 @@ export default function Users() {
             <Box display="flex" justifyContent="end" gap={3} mb={3}>
                 <TableSearch search={search} label="User" />
                 {/* @ts-ignore */}
-                <Button sx={{ px: 6 }} LinkComponent={Link} to="/dashboard/create-user">
+                <Button size="large" sx={{ px: 6 }} LinkComponent={Link} to="/dashboard/create-user">
                     Create User
                 </Button>
             </Box>

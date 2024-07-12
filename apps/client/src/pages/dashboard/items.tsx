@@ -69,7 +69,7 @@ export default function Items() {
             <Box display="flex" justifyContent="end" gap={3} mb={3}>
                 <TableSearch search={search} label="Item" />
                 {/* @ts-ignore */}
-                <Button sx={{ px: 6 }} LinkComponent={Link} to="/dashboard/create-item">
+                <Button size="large" sx={{ px: 6 }} LinkComponent={Link} to="/dashboard/create-item">
                     Create Item
                 </Button>
             </Box>

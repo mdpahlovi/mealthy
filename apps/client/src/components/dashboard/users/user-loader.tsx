@@ -20,8 +20,8 @@ const columns: Column<User> = [
         cell: () => {
             return (
                 <Box display="flex" justifyContent="end" gap={3}>
-                    <Skeleton variant="rectangular" width={36} height={36} />
-                    <Skeleton variant="rectangular" width={36} height={36} />
+                    <Skeleton variant="rectangular" width={36} height={36} sx={{ borderRadius: 9999 }} />
+                    <Skeleton variant="rectangular" width={36} height={36} sx={{ borderRadius: 9999 }} />
                 </Box>
             );
         },
