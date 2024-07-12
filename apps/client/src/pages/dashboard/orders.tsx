@@ -1,71 +1,98 @@
-import dayjs from "dayjs";
-import { useState, useEffect } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { useQuery } from "react-query";
+import React, { useState } from "react";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { Box, Typography, Divider, styled } from "@mui/material";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import type { IApiResponse } from "@/types";
 import type { Item, MealItem, Meal, Order } from "@prisma/client";
+import { SelectContainer, SelectTick } from "@/components/ui";
+import SaveOrders from "@/components/dashboard/orders/save-orders";
 
 type IMeal = { mealItems: ({ item: Item } & MealItem)[] } & Meal;
-type OrderInput = { day: string; mealId: string | null };
+const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 
 export default function Orders() {
     const baseAxios = useAxiosRequest();
-    const queryClient = useQueryClient();
+    const [date, setDate] = useState<Dayjs>(dayjs());
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [mealId, setMealId] = useState<string | null>();
 
-    const { data: meals, isLoading: isLoadingMeals } = useQuery<IApiResponse<IMeal[]>>({
+    const { data, isLoading } = useQuery<IApiResponse<IMeal[]>>({
         queryKey: "meal",
         queryFn: async () => await baseAxios.get("/meal"),
     });
 
-    const { data: orders, isLoading: isLoadingOrders } = useQuery<IApiResponse<Order[]>>({
-        queryKey: "order",
-        queryFn: async () => await baseAxios.get("/order"),
-    });
-
-    const mutation = useMutation(async (order: OrderInput) => await baseAxios.post("/order/create", order), {
-        onSuccess: () => {
-            queryClient.invalidateQueries("order");
-        },
-    });
-
-    const [selectedMeals, setSelectedMeals] = useState<{ [key: string]: string }>({});
-
-    useEffect(() => {
-        if (orders?.data) {
-            const initialSelectedMeals: { [key: string]: string } = {};
-            orders.data.forEach((order) => {
-                initialSelectedMeals[order.day] = order.mealId || "NO_MEAL";
-            });
-            setSelectedMeals(initialSelectedMeals);
-        }
-    }, [orders]);
-
-    const handleMealChange = (day: string, mealId: string) => {
-        if (dayjs(day).isBefore(dayjs(), "day")) return;
-        setSelectedMeals((prev) => ({ ...prev, [day]: mealId }));
-        mutation.mutate({ day, mealId: mealId === "NO_MEAL" ? null : mealId });
-    };
-
-    if (isLoadingMeals || isLoadingOrders) return <div>Loading...</div>;
-
-    const daysOfWeek = Array.from({ length: 7 }, (_, i) => dayjs().add(i, "day").format("YYYY-MM-DD"));
-
     return (
-        <div>
-            {daysOfWeek.map((day) => (
-                <div key={day}>
-                    <h2>{dayjs(day).format("dddd, MMMM D")}</h2>
-                    <select value={selectedMeals[day] || "NO_MEAL"} onChange={(e) => handleMealChange(day, e.target.value)}>
-                        <option value="NO_MEAL">No Meal</option>
-                        {meals?.data?.map((meal) => (
-                            <option key={meal.id} value={meal.id}>
-                                {meal.mealItems.map((mealItem) => mealItem.item.name).join(", ")}
-                            </option>
+        <>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DateCalendar", "DateCalendar"]}>
+                    <DateCalendar value={date} onChange={setDate} disablePast />
+                </DemoContainer>
+            </LocalizationProvider>
+
+            {isLoading ? "Loading..." : ""}
+
+            {date?.day() !== undefined && data?.data?.length ? (
+                <MealContainer>
+                    <SelectContainer
+                        isSelected={mealId === null}
+                        style={{ maxWidth: "100%", paddingBottom: 0 }}
+                        onClick={() => setMealId(null)}
+                    >
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Typography variant="h6" fontWeight={700}>
+                                {dayjs(date).format("ddd, MMM DD")}
+                            </Typography>
+                            <SelectTick isSelected={mealId === null} />
+                        </Box>
+                        <Typography pb={0.75} pl={1}>
+                            &#9755; No Meal
+                        </Typography>
+                    </SelectContainer>
+                    {data?.data
+                        ?.filter((meal) => meal.day === days[date?.day()])
+                        ?.map(({ id, mealItems }) => (
+                            <SelectContainer
+                                key={id}
+                                isSelected={id === mealId}
+                                style={{ maxWidth: "100%", paddingBottom: 0 }}
+                                onClick={() => setMealId(id)}
+                            >
+                                <Box display="flex" justifyContent="space-between" alignItems="center">
+                                    <Typography variant="h6" fontWeight={700}>
+                                        {dayjs(date).format("ddd, MMM DD")}
+                                    </Typography>
+                                    <SelectTick isSelected={id === mealId} />
+                                </Box>
+                                {mealItems?.map(({ item: { name, category } }, idx) => (
+                                    <React.Fragment key={id}>
+                                        {idx !== 0 ? <Divider /> : null}
+                                        <Typography pb={0.75} pt={idx === 0 ? 0 : 0.75} pl={1}>
+                                            &#9755; {name},{" "}
+                                            <Typography component="span" variant="body2" color="text.secondary">
+                                                {category.charAt(0) + category.slice(1).toLowerCase()}
+                                            </Typography>
+                                        </Typography>
+                                    </React.Fragment>
+                                ))}
+                            </SelectContainer>
                         ))}
-                    </select>
-                </div>
-            ))}
-        </div>
+                </MealContainer>
+            ) : null}
+
+            <SaveOrders {...{ date, mealId, setMealId, orders, setOrders, baseAxios }} />
+        </>
     );
 }
+
+const MealContainer = styled(Box)(({ theme }) => ({
+    display: "grid",
+    gap: 24,
+    [theme.breakpoints.up("sm")]: { gridTemplateColumns: "repeat(2, 1fr)" },
+    [theme.breakpoints.up("lg")]: { gridTemplateColumns: "repeat(3, 1fr)" },
+}));

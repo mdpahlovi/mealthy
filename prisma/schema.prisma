@@ -61,15 +61,15 @@ model MealItem {
 model Order {
     id        String   @id @default(uuid())
     userId    String
-    mealId    String
+    mealId    String?
     date      DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    user User @relation(fields: [userId], references: [id])
-    meal Meal @relation(fields: [mealId], references: [id])
+    user User  @relation(fields: [userId], references: [id])
+    meal Meal? @relation(fields: [mealId], references: [id])
 
-    @@unique([userId, mealId, date])
+    @@unique([userId, date])
     @@map("orders")
 }
 

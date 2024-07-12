@@ -8,6 +8,6 @@ router.post("/create", auth("USER", "ADMIN"), OrderController.createOrder);
 
 router.get("/", auth("USER", "ADMIN"), OrderController.getAllOrder);
 
-router.delete("/:id", auth("USER", "ADMIN"), OrderController.deleteOrder);
+router.delete("/:id", auth("ADMIN"), OrderController.deleteOrder);
 
 export const OrderRoutes = router;

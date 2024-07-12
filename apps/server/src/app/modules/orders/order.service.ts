@@ -10,15 +10,22 @@ const createOrder = async ({ date, mealId }: { date: string; mealId: string }, u
         throw new ApiError(httpStatus.BAD_REQUEST, "You aren't eligible to order...!");
     }
 
-    return await prisma.order.create({ data: { date, mealId, userId: user?.id as string } });
+    const isExist = await prisma.order.findUnique({ where: { userId_date: { userId: user?.id as string, date } } });
+
+    if (isExist) {
+        return await prisma.order.update({ where: { id: isExist?.id }, data: { date, mealId, userId: user?.id as string } });
+    } else {
+        return await prisma.order.create({ data: { date, mealId, userId: user?.id as string } });
+    }
 };
 
-const getAllOrder = async (options: IOptions) => {
+const getAllOrder = async (options: IOptions, user: JwtPayload | null) => {
     const { page, size, skip, sortBy, sortOrder } = calculatePagination(options);
 
     const orderBy: Prisma.OrderOrderByWithRelationInput = { [sortBy]: sortOrder };
+
     const orders = await prisma.order.findMany({ skip, take: size, orderBy });
-    const total = await prisma.order.count();
+    const total = await prisma.order.count({});
 
     return { meta: { page, size, total, totalPage: Math.ceil(total / size) }, data: orders };
 };
