@@ -6,7 +6,8 @@
     "scripts": {
         "build": "tsc",
         "start": "node dist",
-        "dev": "ts-node-dev --respawn --transpile-only src"
+        "dev": "ts-node-dev --respawn --transpile-only src",
+        "postinstall": "prisma generate"
     },
     "author": "MD Pahlovi",
     "license": "ISC",
