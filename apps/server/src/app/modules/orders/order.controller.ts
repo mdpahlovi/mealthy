@@ -19,9 +19,21 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllOrder = catchAsync(async (req: Request, res: Response) => {
-    const user = req.user;
     const paginationOptions = pick(req.query, paginationFields);
-    const result = await OrderService.getAllOrder(paginationOptions, user);
+    const result = await OrderService.getAllOrder(paginationOptions);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Order Retrieves Successfully...!",
+        meta: result.meta,
+        data: result.data,
+    });
+});
+
+const getOrdersToday = catchAsync(async (req: Request, res: Response) => {
+    const paginationOptions = pick(req.query, paginationFields);
+    const result = await OrderService.getOrdersToday(paginationOptions);
 
     sendResponse(res, {
         success: true,
@@ -44,4 +56,4 @@ const deleteOrder = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-export const OrderController = { createOrder, getAllOrder, deleteOrder };
+export const OrderController = { createOrder, getAllOrder, getOrdersToday, deleteOrder };

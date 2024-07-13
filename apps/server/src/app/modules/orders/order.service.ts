@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { Prisma } from "@prisma/client";
+import { Item, Meal, MealItem, Order, Prisma, User } from "@prisma/client";
 import { JwtPayload } from "jsonwebtoken";
 import { prisma } from "../../../shared/prisma";
 import ApiError from "../../../errors/ApiError";
@@ -19,7 +19,7 @@ const createOrder = async ({ date, mealId }: { date: string; mealId: string }, u
     }
 };
 
-const getAllOrder = async (options: IOptions, user: JwtPayload | null) => {
+const getAllOrder = async (options: IOptions) => {
     const { page, size, skip, sortBy, sortOrder } = calculatePagination(options);
 
     const orderBy: Prisma.OrderOrderByWithRelationInput = { [sortBy]: sortOrder };
@@ -30,8 +30,24 @@ const getAllOrder = async (options: IOptions, user: JwtPayload | null) => {
     return { meta: { page, size, total, totalPage: Math.ceil(total / size) }, data: orders };
 };
 
+const getOrdersToday = async (options: IOptions) => {
+    const { page, size, skip, sortBy, sortOrder } = calculatePagination(options);
+
+    const orderBy: Prisma.UserOrderByWithRelationInput = { [sortBy]: sortOrder };
+
+    const orders = await prisma.user.findMany({
+        include: { orders: { include: { meal: { include: { mealItems: { include: { item: true } } } } } } },
+        skip,
+        take: size,
+        orderBy,
+    });
+    const total = await prisma.user.count({});
+
+    return { meta: { page, size, total, totalPage: Math.ceil(total / size) }, data: orders };
+};
+
 const deleteOrder = async (id: string) => {
     return await prisma.order.delete({ where: { id } });
 };
 
-export const OrderService = { createOrder, getAllOrder, deleteOrder };
+export const OrderService = { createOrder, getAllOrder, getOrdersToday, deleteOrder };
