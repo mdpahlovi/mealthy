@@ -9,15 +9,13 @@ export default function Hero() {
         <Box
             sx={{
                 display: "flex",
-                justifyContent: "center",
                 alignItems: "center",
                 height: "100vh",
-                backgroundImage: "url('/hero.avif')",
+                backgroundImage: "url('/hero.jpg')",
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: "right",
                 position: "relative",
                 color: "white",
-                textAlign: "center",
             }}
         >
             <Box
@@ -27,34 +25,34 @@ export default function Hero() {
                     left: 0,
                     width: "100%",
                     height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    backgroundColor: "rgba(0, 0, 0, 0.45)",
                     zIndex: 1,
                 }}
             />
-            <Box sx={{ position: "relative", zIndex: 2, maxWidth: 608 }}>
+            <Box sx={{ position: "relative", zIndex: 2, width: "100%", maxWidth: 1280, mx: "auto", p: 4 }}>
                 <Typography variant="h3" fontWeight={700}>
                     Welcome to Mealthy
                 </Typography>
-                <Typography mt={1}>
+                <Typography mt={1} sx={{ maxWidth: 512 }}>
                     A meal management system. Where you can manage your office meals effortlessly. Our system provides a seamless
                     experience.
                 </Typography>
-                <Box display="flex" justifyContent="center" gap={3} marginTop={4}>
+                <Box display="flex" gap={3} marginTop={4}>
                     {user && user?.id ? (
                         <>
                             {/* @ts-ignore */}
-                            <Button color="primary" LinkComponent={Link} to="/dashboard" size="large">
+                            <Button color="primary" LinkComponent={Link} to="/dashboard">
                                 Dashboard
                             </Button>
                         </>
                     ) : (
                         <>
                             {/* @ts-ignore */}
-                            <Button color="primary" LinkComponent={Link} to="/signin" size="large">
+                            <Button color="primary" LinkComponent={Link} to="/signin">
                                 Sign In
                             </Button>
                             {/* @ts-ignore */}
-                            <Button color="secondary" LinkComponent={Link} to="/signup" size="large">
+                            <Button color="secondary" LinkComponent={Link} to="/signup">
                                 Sign Up
                             </Button>
                         </>

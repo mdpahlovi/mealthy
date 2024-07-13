@@ -35,11 +35,9 @@ export default function SaveOrders({ date, mealId, orders, setMealId, setOrders,
             });
     }, []);
 
-    console.log(orders);
-
     useEffect(() => {
         const order = orders?.find((order) => order?.date === dayjs(date).format("YYYY-MM-DD"));
-        order && order?.mealId !== undefined ? setMealId(order?.mealId) : null;
+        order && order?.mealId !== undefined ? setMealId(order?.mealId) : setMealId(undefined);
     }, [orders, date]);
 
     const { mutate, isLoading } = useMutation(async (data: OrderInput) => await baseAxios.post("/order/create", data), {
