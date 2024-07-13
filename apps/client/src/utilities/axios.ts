@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { GenericErrorResponse } from "@/types";
 
-export const BASE_URL = import.meta.env.VITE_APP_SERVER;
+export const BASE_URL = "https://mealthy.onrender.com/api/v1";
 export const baseAxios = axios.create({ baseURL: BASE_URL, timeout: 60000 });
 
 baseAxios.interceptors.response.use(
