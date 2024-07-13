@@ -29,9 +29,6 @@ export default function Meals() {
         onSuccess: () => {
             refetch();
         },
-        onError: (error) => {
-            console.log(error);
-        },
     });
 
     return (
@@ -49,8 +46,8 @@ export default function Meals() {
             ) : (
                 <>
                     <MealContainer>
-                        {data?.data?.map(({ id, day, mealItems }) => (
-                            <Paper sx={{ pt: 0.25, px: 1.75 }}>
+                        {data?.data?.map(({ id, day, mealItems }, idx) => (
+                            <Paper key={idx} sx={{ pt: 0.25, px: 1.75 }}>
                                 <Box display="flex" justifyContent="space-between" alignItems="center">
                                     <Typography variant="h6" fontWeight={700}>
                                         {day.charAt(0) + day.slice(1).toLowerCase()}
@@ -60,7 +57,7 @@ export default function Meals() {
                                     </IconButton>
                                 </Box>
                                 {mealItems?.map(({ item: { name, category } }, idx) => (
-                                    <React.Fragment key={id}>
+                                    <React.Fragment key={idx}>
                                         {idx !== 0 ? <Divider /> : null}
                                         <Typography pb={0.75} pt={idx === 0 ? 0 : 0.75} pl={1}>
                                             &#9755; {name},{" "}

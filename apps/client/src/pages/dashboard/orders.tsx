@@ -56,9 +56,9 @@ export default function Orders() {
                     </SelectContainer>
                     {data?.data
                         ?.filter((meal) => meal.day === days[date?.day()])
-                        ?.map(({ id, mealItems }) => (
+                        ?.map(({ id, mealItems }, idx) => (
                             <SelectContainer
-                                key={id}
+                                key={idx}
                                 isSelected={id === mealId}
                                 style={{ maxWidth: "100%", paddingBottom: 0 }}
                                 onClick={() => setMealId(id)}
@@ -70,7 +70,7 @@ export default function Orders() {
                                     <SelectTick isSelected={id === mealId} />
                                 </Box>
                                 {mealItems?.map(({ item: { name, category } }, idx) => (
-                                    <React.Fragment key={id}>
+                                    <React.Fragment key={idx}>
                                         {idx !== 0 ? <Divider /> : null}
                                         <Typography pb={0.75} pt={idx === 0 ? 0 : 0.75} pl={1}>
                                             &#9755; {name},{" "}

@@ -1,11 +1,14 @@
+import toast from "react-hot-toast";
 import dayjs, { Dayjs } from "dayjs";
 import { Button } from "@mui/material";
+import { useMutation } from "react-query";
 import type { AxiosInstance } from "axios";
 import type { Order } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import supabase from "@/utilities/supabase";
+import { useAppSelector } from "@/redux/hooks";
 
-type OrderInput = { date: Dayjs; mealId: string | null };
+type OrderInput = { date: string; mealId: string | null };
 
 type SaveOrdersProps = {
     date: Dayjs;
@@ -18,33 +21,46 @@ type SaveOrdersProps = {
 
 export default function SaveOrders({ date, mealId, orders, setMealId, setOrders, baseAxios }: SaveOrdersProps) {
     const [loading, setLoading] = useState(true);
-
-    const { refetch } = useQuery({
-        queryKey: "order",
-        queryFn: async () => await baseAxios.get("/order"),
-        onSuccess: (data) => {
-            setOrders(data?.data);
-            setLoading(false);
-        },
-    });
+    const [refresh, setRefresh] = useState(false);
+    const { user } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
-        loading ? refetch() : null;
+        supabase
+            .from("orders")
+            .select("*")
+            .eq("userId", user?.id)
+            .then(({ data }) => {
+                data ? setOrders(data) : null;
+                setLoading(false);
+            });
     }, []);
 
+    console.log(orders);
+
     useEffect(() => {
-        const order = orders?.find((order) => dayjs(order?.date).isSame(date));
+        const order = orders?.find((order) => order?.date === dayjs(date).format("YYYY-MM-DD"));
         order && order?.mealId !== undefined ? setMealId(order?.mealId) : null;
     }, [orders, date]);
 
     const { mutate, isLoading } = useMutation(async (data: OrderInput) => await baseAxios.post("/order/create", data), {
-        onSuccess: () => {
-            refetch();
+        onSuccess: (data) => {
+            setRefresh(!refresh);
+            // @ts-ignore
+            toast.success(data?.message);
+        },
+        onError: (error) => {
+            // @ts-ignore
+            toast.error(error?.message);
         },
     });
 
     return loading ? null : (
-        <Button sx={{ mt: 3 }} onClick={() => mutate({ date, mealId: mealId || null })} fullWidth disabled={isLoading}>
+        <Button
+            sx={{ mt: 3 }}
+            onClick={() => mutate({ date: dayjs(date).format("YYYY-MM-DD"), mealId: mealId || null })}
+            fullWidth
+            disabled={isLoading}
+        >
             Save Order
         </Button>
     );

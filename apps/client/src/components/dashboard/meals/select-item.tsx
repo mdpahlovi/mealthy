@@ -21,8 +21,8 @@ export default function SelectItem({ error, value, mealItems, setValue }: Select
     return (
         <Box>
             <Box display="flex" flexWrap="wrap" gap={2}>
-                {mealItems?.map(({ id, name: itemName, category }) => (
-                    <SelectContainer key={id} isSelected={value?.items?.includes(id)} onClick={() => handleSelect(id)}>
+                {mealItems?.map(({ id, name: itemName, category }, idx) => (
+                    <SelectContainer key={idx} isSelected={value?.items?.includes(id)} onClick={() => handleSelect(id)}>
                         <Box display="flex" alignItems="center" gap={2}>
                             <Typography variant="h6" fontWeight={700} whiteSpace="nowrap">
                                 {itemName}

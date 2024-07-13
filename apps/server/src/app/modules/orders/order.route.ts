@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/create", auth("USER", "ADMIN"), OrderController.createOrder);
 
-router.get("/", auth("USER", "ADMIN"), OrderController.getAllOrder);
+router.get("/", auth("ADMIN"), OrderController.getAllOrder);
 
 router.delete("/:id", auth("ADMIN"), OrderController.deleteOrder);
 
