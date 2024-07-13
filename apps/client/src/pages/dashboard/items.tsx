@@ -17,9 +17,9 @@ import type { Column, GenericErrorResponse, IApiResponse } from "@/types";
 dayjs.extend(LocalizedFormat);
 
 const columns: Column<Item> = [
-    { header: "Name", cell: ({ name }) => name },
-    { header: "Category", cell: ({ category }) => category },
-    { header: "Created At", cell: ({ createdAt }) => dayjs(createdAt).format("LL") },
+    { header: "Name", sort: "name", cell: ({ name }) => name },
+    { header: "Category", sort: "category", cell: ({ category }) => category },
+    { header: "Created At", sort: "createdAt", cell: ({ createdAt }) => dayjs(createdAt).format("LL") },
     {
         header: "Actions",
         cell: (data, axios, queryClient) => {
@@ -81,6 +81,8 @@ export default function Items() {
                     data={data?.data || []}
                     axiosInstance={baseAxios}
                     pagination={{ page, size, total: data?.meta?.total! }}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
                 />
             )}
         </>

@@ -5,11 +5,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useAxiosRequest } from "@/hooks/useAxiosRequest";
 
 import { Table, TableSearch } from "@/components/table";
-import UserLoader from "@/components/dashboard/users/user-loader";
-import { Box, Button, Divider, Modal, Paper, Typography } from "@mui/material";
+import ScheduleLoader from "@/components/dashboard/schedules/schedule-loader";
+import { Box, Button, Divider, IconButton, Modal, Paper, Typography } from "@mui/material";
 
 import type { Prisma } from "@prisma/client";
 import type { Column, GenericErrorResponse, IApiResponse } from "@/types";
+import { Close } from "@mui/icons-material";
 
 type IUserOrder = Prisma.UserGetPayload<{
     include: { orders: { include: { meal: { include: { mealItems: { include: { item: true } } } } } } };
@@ -26,7 +27,7 @@ export default function Users() {
 
     const { data, isLoading } = useQuery<IApiResponse<IUserOrder[]>, GenericErrorResponse>({
         queryKey: ["today's-order", { search, page, size }],
-        queryFn: async () => await baseAxios.get("/order/today", { params: { search, page, size } }),
+        queryFn: async () => await baseAxios.get("/order/users", { params: { search, page, size } }),
         keepPreviousData: true,
     });
 
@@ -54,7 +55,7 @@ export default function Users() {
                 </Button>
             </Box>
             {isLoading ? (
-                <UserLoader />
+                <ScheduleLoader />
             ) : (
                 <Table
                     columns={columns}
@@ -75,6 +76,7 @@ export default function Users() {
                         maxWidth: 704,
                         p: 3,
                         display: "flex",
+                        position: "relative",
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
@@ -82,14 +84,17 @@ export default function Users() {
                         borderRadius: 3,
                     }}
                 >
+                    <IconButton sx={{ position: "absolute", top: 3, right: 3 }} onClick={() => setOpen(undefined)}>
+                        <Close />
+                    </IconButton>
                     {open?.orders?.length ? (
                         <>
                             <Typography sx={{ width: "100%", mb: 1 }} variant="h6" fontWeight={700}>
                                 Orders
                             </Typography>
-                            <Box sx={{ width: "100%", display: "flex", gap: 3 }}>
+                            <Box sx={{ width: "100%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }}>
                                 {open?.orders?.map(({ date, meal }) => (
-                                    <Paper sx={{ width: "100%", maxWidth: 316, px: 1, height: "max-content" }}>
+                                    <Paper sx={{ width: "100%", px: 1, height: "max-content" }}>
                                         <Typography variant="h6" fontWeight={700}>
                                             {date}
                                         </Typography>

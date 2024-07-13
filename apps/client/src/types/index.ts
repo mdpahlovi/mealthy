@@ -12,4 +12,8 @@ export type IApiResponse<T> = {
     data?: T | null;
 };
 
-export type Column<T> = { header: string; cell: (data: T, axios: AxiosInstance, queryClient: QueryClient) => React.ReactNode }[];
+export type Column<T> = {
+    header: string;
+    sort?: keyof T;
+    cell: (data: T, axios: AxiosInstance, queryClient: QueryClient) => React.ReactNode;
+}[];
