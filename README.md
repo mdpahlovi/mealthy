@@ -31,6 +31,11 @@ Start the dev server
 ```
 
 
+## ERD & ENV
+
+[ERD](https://app.diagrams.net/#G1BBsdhJmIvpRYJZaLBOgrRUaWzIDXdnHl) && [ENV](https://drive.google.com/file/d/13Lnoa6dQ9TwDOPklbXObZxku7E5k8VGF/view?usp=sharing)
+
+
 ## User Credentials
 
 To run this project, you will need to use the following credentials.
