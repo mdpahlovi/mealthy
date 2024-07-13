@@ -24,7 +24,7 @@ export default function DashboardLayout() {
                 <Box mb={3} display="flex" alignItems="center" gap={3}>
                     <SideBarButton open={open} setOpen={setOpen} />
                     <Typography variant="h4" fontWeight={700}>
-                        {pathname === "/dashboard" ? `Hi, ${user?.name}` : capitalizeFirstLetter(pathname.replace("/dashboard/", ""))}
+                        {pathname === "/dashboard" ? `Hi, ${user?.name}` : formatPathname(pathname)}
                     </Typography>
                 </Box>
                 <Outlet />
@@ -33,8 +33,16 @@ export default function DashboardLayout() {
     );
 }
 
-function capitalizeFirstLetter(string: string) {
-    const strings = string.includes("-") ? string.split(" ") : [string];
+function formatPathname(pathname: string): string {
+    const regex = /\/dashboard\/([^\/]+)(?:\/[a-z0-9-]+)?/i;
+    const match = pathname.match(regex);
 
-    return strings.map((string) => string.charAt(0).toUpperCase() + string.slice(1));
+    if (match && match[1]) {
+        return match[1]
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    } else {
+        return pathname;
+    }
 }
