@@ -9,7 +9,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import type { IApiResponse } from "@/types";
-import type { Item, MealItem, Meal, Order } from "@prisma/client";
+import type { Item, MealItem, Meal } from "@prisma/client";
 import { SelectContainer, SelectTick } from "@/components/ui";
 import SaveOrders from "@/components/dashboard/orders/save-orders";
 
@@ -19,8 +19,7 @@ const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", 
 export default function Orders() {
     const baseAxios = useAxiosRequest();
     const [date, setDate] = useState<Dayjs>(dayjs());
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [mealId, setMealId] = useState<string | null>();
+    const [mealId, setMealId] = useState<string | null>(null);
 
     const { data, isLoading } = useQuery<IApiResponse<IMeal[]>>({
         queryKey: "meal",
@@ -85,7 +84,7 @@ export default function Orders() {
                 </MealContainer>
             ) : null}
 
-            <SaveOrders {...{ date, mealId, setMealId, orders, setOrders, baseAxios }} />
+            <SaveOrders {...{ date, mealId, setMealId, baseAxios }} />
         </>
     );
 }

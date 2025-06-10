@@ -20,7 +20,7 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
 
 const getAllOrder = catchAsync(async (req: Request, res: Response) => {
     const paginationOptions = pick(req.query, paginationFields);
-    const result = await OrderService.getAllOrder(paginationOptions);
+    const result = await OrderService.getAllOrder(paginationOptions, req.query);
 
     sendResponse(res, {
         success: true,

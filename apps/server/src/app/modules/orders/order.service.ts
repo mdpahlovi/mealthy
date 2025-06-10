@@ -13,19 +13,31 @@ const createOrder = async ({ date, mealId }: { date: string; mealId: string }, u
     const isExist = await prisma.order.findUnique({ where: { userId_date: { userId: user?.id as string, date } } });
 
     if (isExist) {
-        return await prisma.order.update({ where: { id: isExist?.id }, data: { date, mealId, userId: user?.id as string } });
+        return await prisma.order.update({
+            where: { id: isExist?.id },
+            data: { date, mealId, userId: user?.id as string },
+        });
     } else {
         return await prisma.order.create({ data: { date, mealId, userId: user?.id as string } });
     }
 };
 
-const getAllOrder = async (options: IOptions) => {
+const getAllOrder = async (options: IOptions, query: any) => {
     const { page, size, skip, sortBy, sortOrder } = calculatePagination(options);
+    let orderFilters: Prisma.OrderWhereInput = {};
+
+    if (query?.userId) {
+        orderFilters = { ...orderFilters, userId: query?.userId };
+    }
+
+    if (query?.date) {
+        orderFilters = { ...orderFilters, date: query?.date };
+    }
 
     const orderBy: Prisma.OrderOrderByWithRelationInput = { [sortBy]: sortOrder };
 
-    const orders = await prisma.order.findMany({ skip, take: size, orderBy });
-    const total = await prisma.order.count({});
+    const orders = await prisma.order.findMany({ where: orderFilters, skip, take: size, orderBy });
+    const total = await prisma.order.count({ where: orderFilters });
 
     return { meta: { page, size, total, totalPage: Math.ceil(total / size) }, data: orders };
 };
